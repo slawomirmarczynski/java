@@ -1,4 +1,4 @@
 # java
 Przykładowe programy w języku Java
 
-- **FilesInDirectory** - używanie JFileChooser i File, negocjowanie LaF, tworzenie okienka z guzikiem.
+1. **FilesInDirectory** - używanie JFileChooser i File, negocjowanie LaF, tworzenie okienka z guzikiem.
