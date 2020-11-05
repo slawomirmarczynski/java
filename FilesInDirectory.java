@@ -41,10 +41,10 @@ import javax.swing.UIManager;
  *
  * @author Sławomir Marczyński
  */
-public class Program implements Runnable {
+public class FilesInDirectory implements Runnable {
 
     public static void main(String[] args) {
-        Program program = new Program();
+        FilesInDirectory program = new FilesInDirectory();
         program.setupLookAndFeel();
         program.run();
     }
