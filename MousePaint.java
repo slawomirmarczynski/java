@@ -160,7 +160,7 @@ public class Program implements Runnable {
 
                     // Graphics2D jest subklasą klasy Graphics, udostępnia wiele
                     // więcej niż sama klasa Graphics. Metoda paint ma jako
-                    // parametr zwykłe Graphics, ale de facto dostaje zawsze
+                    // parametr zwykłe Graphics, ale de facto dostaje zwawsze
                     // Graphics2D. Aby jednak używać rozszerzonych możliwości
                     // trzeba najpierw "rzutować w dół" (downcast) graphics.
                     //
@@ -168,29 +168,25 @@ public class Program implements Runnable {
 
                     // Teraz jest bardzo prosto - rysujemy wszystkie linie.
                     //
-                    // Nie jest to zrobione w najlepszy możliwy sposób
-                    // - niepotrzebnie są powtarzane (jeżeli kompilator tego
-                    // nie zoptymalizował) niektóre operacje - ale działa.
+                    for (var polyLine : lines) {
+                        paintPolyLine(graphics2d, polyLine);
+                    }
+
+                    // Jeżeli obiekt Graphics jest uzystany jako parametr
+                    // wywołania metody paint to nie wywołuje się dispose,
+                    // bo to nie my jesteśmy odpowiedzialni wtedy za recykling.
                     //
-                    // @todo: Dane są zapisane jako lista list z punktami,
-                    //        a jakoś tak nieszczęśliwie nie ma w Graphics2D
-                    //        rysowania łamanej zadanej jako lista punktów.
-                    //        Być może należałoby zrobić taką metodę (rysowanie
-                    //        listy punktów) i z niej korzystać - zamiast tego
-                    //        co jest poniżej - czyli konwersji na tablice
-                    //        i potem rysowania danych z tablicy.
-                    //        Być może należałoby od razu dane przechowywać
-                    //        osobno x, osobno y, a wtedy dałoby się użyć
-                    //        graphics2d.drawPolyline(...)
-                    //
-                    for (var line : lines) {
-                        Point[] p = line.toArray(new Point[0]);
-                        for (int i = 1; i < p.length; i++) {
-                            var x1 = p[i - 1].x;
-                            var y1 = p[i - 1].y;
-                            var x2 = p[i].x;
-                            var y2 = p[i].y;
-                            graphics2d.drawLine(x1, y1, x2, y2);
+                    // graphics2d.dispose();
+                }
+
+                // Kto powiedział że klasa anonimowa nie może mieć takich metod?
+                //
+                private void paintPolyLine(Graphics2D graphics2d, LinkedList<Point> list) {
+                    if (list != null || !list.isEmpty()) {
+                        Point p = list.getFirst();
+                        for (Point q : list) {
+                            graphics2d.drawLine(p.x, p.y, q.x, q.y);
+                            p = q;
                         }
                     }
                 }
@@ -226,16 +222,11 @@ public class Program implements Runnable {
                     canvas.lines.add(new LinkedList<Point>());
                 }
 
-                // Ten fragment programu przechwytuje zdarzenia kliknięcia
-                // - czyli takie że najpiew guzik myszy został naciśnięty,
-                // a następnie puszczony w tym samym miejscu.
-                //
-                // Zamiast mouseClicked można użyć mousePressed - wtedy reakcja
-                // będzie na samo naciśnięcie (czyli po naciśnięciu będzie można
-                // przesunąć mysz i też się wywoła).
+                // Zamiast mousePressed można użyć mouseClicked - ale działa to
+                // trochę gorzej - mały ruch myszy i nie łapie clicków...
                 //
                 @Override
-                public void mouseClicked(MouseEvent event) {
+                public void mousePressed(MouseEvent event) {
 
                     Graphics2D g = (Graphics2D) canvas.getGraphics();
                     g.fillRect(event.getX(), event.getY(), 5, 5);
