@@ -160,7 +160,7 @@ public class Program implements Runnable {
 
                     // Graphics2D jest subklasą klasy Graphics, udostępnia wiele
                     // więcej niż sama klasa Graphics. Metoda paint ma jako
-                    // parametr zwykłe Graphics, ale de facto dostaje zwawsze
+                    // parametr zwykłe Graphics, ale de facto dostaje zawsze
                     // Graphics2D. Aby jednak używać rozszerzonych możliwości
                     // trzeba najpierw "rzutować w dół" (downcast) graphics.
                     //
