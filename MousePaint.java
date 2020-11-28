@@ -23,6 +23,7 @@
  */
 package example.mousepaint;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -154,6 +155,16 @@ public class Program implements Runnable {
 
                 /**
                  * Odmalowywanie zawartości okna.
+                 *
+                 * Można to robić w paint, można to robić w paintComponent.
+                 * Dla kontrolek Swing'a paint wywołuje paintComponent, potem
+                 * paintBorder i wreszcie paintChildren. Więc jeżeli zrobimy
+                 * to w paint (a nie w paintComponent), to jeżeli nie wywołamy
+                 * super.paint() - a nie wywołamy, bo tego się nie robi gdy
+                 * nadpisuje się metodę paint - nie zostaną narysowane boki
+                 * i dzieci - bo nie będą wywołane paintBorder i paintChildrens.
+                 * Różnica nieistotna, bo i tak dla JComponent nic tam ciekawego
+                 * nie było. Ale warto wiedzieć.
                  */
                 @Override
                 public void paintComponent(Graphics graphics) {
@@ -168,20 +179,18 @@ public class Program implements Runnable {
 
                     // Teraz jest bardzo prosto - rysujemy wszystkie linie.
                     //
-                    try {
-                        for (var polyLine : lines) {
-                            paintPolyLine(graphics2d, polyLine);
-                        }
-                    } catch(Exception ex)
-                    {
-                        System.out.println("exxxceptiooon");
+                    for (var polyLine : lines) {
+                        paintPolyLine(graphics2d, polyLine);
                     }
 
                     // Jeżeli obiekt Graphics jest uzystany jako parametr
                     // wywołania metody paint to nie wywołuje się dispose,
                     // bo to nie my jesteśmy odpowiedzialni wtedy za recykling.
+                    // Reguła jest prosta - nie nasze - nie niszczymy.
                     //
-                    // graphics2d.dispose();
+                    // NIE DAJEMY graphics2d.dispose(); - bo moglibyśmy oddać
+                    // do recyclingu kontekst grafiki (obiekt klasy Graphics)
+                    // który byłby jeszcze potrzebny.
                 }
 
                 // Kto powiedział że klasa anonimowa nie może mieć takich metod?
@@ -233,8 +242,21 @@ public class Program implements Runnable {
                 @Override
                 public void mousePressed(MouseEvent event) {
 
+                    // Tym razem to my występujemy z inicjatywą o kontekst
+                    // graficzny Graphics - więc to my wywołamy dispose na rzecz
+                    // tego obiektu.
+                    //
                     Graphics2D g = (Graphics2D) canvas.getGraphics();
-                    g.fillRect(event.getX(), event.getY(), 5, 5);
+                    g.setColor(Color.BLUE);
+                    g.drawRect(event.getX(), event.getY(), 25, 25);
+                    g.setColor(Color.RED);
+                    g.fillOval(event.getX(), event.getY(), 15, 15);
+
+                    // Ekologiczny recycling - bez tego też będzie działać,
+                    // ale uwalnianie kontekstu zwalnia zasoby - i to może być
+                    // bardzo ważne, bo z tym kontekstem wiązać się mogą bardzo
+                    // ograniczone zasoby systemowe.
+                    //
                     g.dispose();
 
                     // Trochę pracy przed nami - trzeba sprawdzić który guzik
