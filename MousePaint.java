@@ -156,7 +156,7 @@ public class Program implements Runnable {
                  * Odmalowywanie zawartości okna.
                  */
                 @Override
-                public void paint(Graphics graphics) {
+                public void paintComponent(Graphics graphics) {
 
                     // Graphics2D jest subklasą klasy Graphics, udostępnia wiele
                     // więcej niż sama klasa Graphics. Metoda paint ma jako
@@ -168,8 +168,13 @@ public class Program implements Runnable {
 
                     // Teraz jest bardzo prosto - rysujemy wszystkie linie.
                     //
-                    for (var polyLine : lines) {
-                        paintPolyLine(graphics2d, polyLine);
+                    try {
+                        for (var polyLine : lines) {
+                            paintPolyLine(graphics2d, polyLine);
+                        }
+                    } catch(Exception ex)
+                    {
+                        System.out.println("exxxceptiooon");
                     }
 
                     // Jeżeli obiekt Graphics jest uzystany jako parametr
@@ -182,7 +187,7 @@ public class Program implements Runnable {
                 // Kto powiedział że klasa anonimowa nie może mieć takich metod?
                 //
                 private void paintPolyLine(Graphics2D graphics2d, LinkedList<Point> list) {
-                    if (list != null || !list.isEmpty()) {
+                    if (list != null && !list.isEmpty()) {
                         Point p = list.getFirst();
                         for (Point q : list) {
                             graphics2d.drawLine(p.x, p.y, q.x, q.y);
@@ -230,6 +235,7 @@ public class Program implements Runnable {
 
                     Graphics2D g = (Graphics2D) canvas.getGraphics();
                     g.fillRect(event.getX(), event.getY(), 5, 5);
+                    g.dispose();
 
                     // Trochę pracy przed nami - trzeba sprawdzić który guzik
                     // myszy został naciśnięty. Problem w tym że różne myszy
