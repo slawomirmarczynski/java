@@ -30,6 +30,8 @@ import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -41,11 +43,17 @@ import javax.swing.UIManager;
  *
  * @author Sławomir Marczyński
  */
-public class FilesInDirectory implements Runnable {
+public class Program implements Runnable {
+
+    protected ResourceBundle resourceBundle;
+
+    public Program() {
+        setupLookAndFeel();
+        setupL10n();
+    }
 
     public static void main(String[] args) {
-        FilesInDirectory program = new FilesInDirectory();
-        program.setupLookAndFeel();
+        Program program = new Program();
         program.run();
     }
 
@@ -64,7 +72,7 @@ public class FilesInDirectory implements Runnable {
             // Tworzymy głowne (ale jeszcze puste) okno programu i określamy
             // jego preferowany rozmiar.
             //
-            JFrame frame = new JFrame("Aplikacja przykładowa");
+            JFrame frame = new JFrame(translate("An example application"));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             Dimension frameDimension = new Dimension(width, height);
             frame.setPreferredSize(frameDimension);
@@ -83,8 +91,16 @@ public class FilesInDirectory implements Runnable {
             // anonimowa implementująca interfejs ActionListener zapisana
             // w notacji lambda. Yep, to jest trochę skomplikowane i zakręcone.
             //
-            JButton openFolderButton = new JButton("open folder");
-            openFolderButton.addActionListener((ActionEvent event) -> {
+            // W czasie tworzenia guzika tłumaczymy nazwę na tę która odpowiada
+            // danemu "locale". Możnaby zorganizować to także i w ten sposób,
+            // że zamiast tworzyć JButton tworzylibyśmy obiekt subklasy klasy
+            // JButton, np. MyL10nJButton, którego konstruktor (ew. fabryka)
+            // kapsułkowałby proces tłumaczenia. Pozostaje jednak problem
+            // - jak zmieniać język w trakcie działania programu - czyli już
+            // po rozpoczęciu jego pracy.
+            //
+            JButton openButton = new JButton(translate("open"));
+            openButton.addActionListener((ActionEvent event) -> {
 
                 // Ten fragment programu zostaje wywołany kiedyś, gdzieś,
                 // w odpowiedzi na naciśnięcie guzika. Czyli nie bezpośrednio
@@ -109,7 +125,7 @@ public class FilesInDirectory implements Runnable {
                 }
 
             });
-            frame.getContentPane().add(openFolderButton);
+            frame.getContentPane().add(openButton);
 
             // Dopasowujemy do siebie rozmiaru elementów (tak aby każdy był
             // nie mniejszy niż preferowana wielkość) i pokazywanie/uruchamianie
@@ -120,13 +136,64 @@ public class FilesInDirectory implements Runnable {
         }
         );
     }
+    String translate(String s)
+    {
+        try{
+            return resourceBundle.getString(s.toLowerCase().replaceAll(" ", "_"));
+        }catch(MissingResourceException ex) {
+            return s;
+        }
+    }
+
+
+    /**
+     * Metoda która dostaje tablicę files - z plikami jako takimi i z katalogami
+     * (folderami) w których mogą być pliki oraz katalogi - i która wypisuje
+     * nazwy wszystkich plików jakie tylko odnajdzie.
+     *
+     * @param files tablica obiektów File
+     */
+    private void processFiles(File[] files) {
+        if (files != null) {
+            for (File file : files) {
+                //
+                // Nie ma konieczności sprawdzania czy file != null, bo nie
+                // powinno być. Ale chyba też nie zaszkodzi. Zamiast println
+                // może być oczywiście robione coś innego - to czego akurat
+                // będziemy potrzebowali we własnym programie.
+                //
+                // Sprawdzanie czy plik nie jest plikiem ukrytym ukrywa pliki.
+                //
+                if ((file != null) && (file.isHidden() == false)) {
+                    if (file.isFile()) {
+                        System.out.println(translate("zwykły plik ") + file.getPath());
+                    } else if (file.isDirectory()) {
+                        System.out.println(translate("katalog     ") + file.getPath());
+                        processFiles(file.listFiles());
+                    } else {
+                        // Nie wiadomo co - ani katalog, ani zwykły plik
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Lokalizacja programu: dopasowywanie jego działania do potrzeb użytkownika
+     * tak aby mógł go obsługiwać w swoim języku naturalnym oraz wszystkimi
+     * innymi ustawieniami jakie są dla niego najodpowiedniejsze.
+     */
+    private void setupL10n() {
+        UIManager.getDefaults().addResourceBundle("example.filesindirectory.messages.jfilechooser");
+        resourceBundle = ResourceBundle.getBundle("example.filesindirectory.messages.program");
+    }
 
     /**
      * Ustalanie look-and-feel (tzw. laf), czyli jaki mają wygladać kontrolki -
      * czy mają przypominać te znane z MS Windows, czy raczej takie jakie są na
      * komputerach Apple, czy może jeszcze inne?!
      */
-    protected void setupLookAndFeel() {
+    private void setupLookAndFeel() {
         // Tablica zawierająca preferowane i tablica zawierające dostępne LaF.
         // Są one final, bo nie będą modyfikowane po utworzeniu.
         //
@@ -152,38 +219,6 @@ public class FilesInDirectory implements Runnable {
             }
         } catch (Exception ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Metoda która dostaje tablicę files - z plikami jako takimi i z katalogami
-     * (folderami) w których mogą być pliki oraz katalogi - i która wypisuje
-     * nazwy wszystkich plików jakie tylko odnajdzie.
-     *
-     * @param files tablica obiektów File
-     */
-    private void processFiles(File[] files) {
-        if (files != null) {
-            for (File file : files) {
-                //
-                // Nie ma konieczności sprawdzania czy file != null, bo nie
-                // powinno być. Ale chyba też nie zaszkodzi. Zamiast println
-                // może być oczywiście robione coś innego - to czego akurat
-                // będziemy potrzebowali we własnym programie.
-                //
-                // Sprawdzanie czy plik nie jest plikiem ukrytym ukrywa pliki.
-                //
-                if ((file != null) && (file.isHidden() == false)) {
-                    if (file.isFile()) {
-                        System.out.println("zwykły plik " + file.getPath());
-                    } else if (file.isDirectory()) {
-                        System.out.println("katalog     " + file.getPath());
-                        processFiles(file.listFiles());
-                    } else {
-                        // Nie wiadomo co - ani katalog, ani zwykły plik
-                    }
-                }
-            }
         }
     }
 
