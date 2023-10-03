@@ -17,4 +17,9 @@ daje ciekawe możliwości.
 ## Po co package helloworld?
 
 Aby nie stwarzać problemów z ewentualnymi kolizjami
-nazw wrzucamy wszystko do pakietu helloworld.
+nazw wrzucamy wszystko co zrobiliśmy do pakietu helloworld.
+
+## Co z komentarzami?
+
+Komentarzy jest trochę za dużo - niektóre są niepotrzebne dla doświadczonych
+programistów - ale to dla lepszego zapoznania się z językiem Java.
