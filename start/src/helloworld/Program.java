@@ -1,4 +1,4 @@
-package example.helloworld;
+package helloworld;
 
 public class Program implements Runnable {
 
