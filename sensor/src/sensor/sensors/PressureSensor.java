@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Sławomir Marczyński.
+ * Copyright 2023 Sławomir Marczyński.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,11 @@
  */
 package sensor.sensors;
 
+/**
+ * Sensor ciśnienia powietrza. Ok, to tylko przykład. 
+ * "Prawdziwy program" mógłby w tym miejscu użyć w nazwie klasy czegoś
+ * identyfikującego konkretny podzespół elektroniczny, a nawet wersję tegoż.
+ */
 public class PressureSensor extends Sensor {
 
     public PressureSensor(String name) {
@@ -31,6 +36,12 @@ public class PressureSensor extends Sensor {
 
     @Override
     public void measurement() {
+        
+        // To jest tylko demo i dlatego metoda measurement() nie robi tego
+        // co powinna robić, tylko wstawia "przypadkową wartość" (stałą, więc
+        // za każdym razem tę samą) abyśmy mogli zobaczyć efekty działania
+        // programu.
+        //
         value = 1020.5;
     }
 }
