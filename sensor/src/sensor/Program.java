@@ -30,11 +30,7 @@ package sensor;
 // hierarchii klas używających składowych chronionych (czyli protected) osobno,
 // w osobnym pakiecie.
 //
-
-import sensor.sensors.HumiditySensor;
-import sensor.sensors.PressureSensor;
-import sensor.sensors.Sensor;
-import sensor.sensors.TemperatureSensor;
+import sensor.sensors.*;
 
 public class Program implements Runnable {
 
@@ -117,19 +113,15 @@ public class Program implements Runnable {
     }
 
     /**
-     * Co najmniej jednosekundowe opóźnienie działania wątku. Może być dłuższe
-     * niż jedna sekunda, bo wątek może zostać przerwany/zawieszony przez inny
-     * wątek i nie powinno to być traktowane jako poważny błąd. Chyba że zamiast
-     * jednej sekundy będzie znacznie dłuższy czas, np. jedna minuta.
+     * Co najmniej jednosekundowe opóźnienie działania wątku.
      */
     private void delayOneSecond() {
         // @todo: Tu powinno być zagwarantowane opóźnienie trwające 1 sekundę.
-        //        Na razie nie ma go, aby nie utrudniać zrozumienia działania
-        //        całego przykładu.
+        //        Na razie nie ma go, aby nie gmatwać przykładu.
     }
 
     /**
-     * Sposób na tworzenie tablicy z sensorami.
+     * Tworzenie tablicy z sensorami.
      *
      * @return tablica obiektów Sensor zawierająca dokładnie tyle obiektów
      * ile wynosi rozmiar tablicy.
@@ -139,8 +131,7 @@ public class Program implements Runnable {
         Sensor p = new PressureSensor("ciśnienie");
         Sensor h = new HumiditySensor("wilgotność");
 
-        // Mamy utworzone sensory, tworzymy z nich literał tablicowy, czyli
-        // tablicę złożoną z podanych wprost elementów.
+        // Mamy utworzone sensory, tworzymy z nich tablicę.
         //
         return new Sensor[]{t, p, h};
     }

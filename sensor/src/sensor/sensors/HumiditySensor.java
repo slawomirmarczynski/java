@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Sławomir Marczyński.
+ * Copyright 2023 Sławomir Marczyński.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,11 @@
  */
 package sensor.sensors;
 
+/**
+ * Sensor wilgotności powietrza. Ok, to tylko przykład. 
+ * "Prawdziwy program" mógłby w tym miejscu użyć w nazwie klasy czegoś
+ * identyfikującego konkretny podzespół elektroniczny, a nawet wersję tegoż.
+ */
 public class HumiditySensor extends Sensor {
     public HumiditySensor(String name) {
         super(name);
