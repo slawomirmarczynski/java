@@ -35,6 +35,12 @@ public class HumiditySensor extends Sensor {
 
     @Override
     public void measurement() {
-        value = 45.0;
+
+        // To jest tylko demo i dlatego metoda measurement() nie robi tego
+        // co powinna robić, tylko wstawia "przypadkową wartość" (stałą, więc
+        // za każdym razem tę samą) abyśmy mogli zobaczyć efekty działania
+        // programu.
+        //
+        value = 45.0; 
     }
 }

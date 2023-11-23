@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Sławomir Marczyński.
+ * Copyright 2023 Sławomir Marczyński.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,12 @@ package sensor;
 //
 import sensor.sensors.*;
 
+/**
+ * Klasa która, na zewnątrz, reprezentuje "cały program". Ponieważ jest to tylko
+ * przykład, to jest ona uproszczona, bo zadowalamy się pojedynczym odczytem
+ * z sensorów i wypisaniem wyników, nie mamy GUI (więc i LaF), nie potrzebujemy
+ * obsługi wyjątków.
+ */
 public class Program implements Runnable {
 
     // Czym jest sensors? To tablica zawierająca obiekty klasy Sensors,
