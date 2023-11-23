@@ -68,9 +68,9 @@ public class LoopsDemo {
 
         // Instrukcja break przerywa wykonanie pętli.
         //
-        for (int i = 0; i < 10; i++) {
-            System.out.println("test pojedynczego break " + i);
-            if (i > 5) {
+        for (int p = 0; p < 10; p++) {
+            System.out.println("test pojedynczego break " + p);
+            if (p > 5) {
                 break;
             }
         }
@@ -119,7 +119,7 @@ public class LoopsDemo {
             epsilon = epsilon / 2.0;
         }
 
-        // Jest instrukcji do-while, ale przydaje się rzadziej niż proste while.
+        // Jest instrukcja do-while, ale przydaje się rzadziej niż proste while.
         //
         epsilon = 1.0;
         do {
