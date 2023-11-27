@@ -26,11 +26,26 @@ package swingplot;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * Jeszcze jedna implementacja interfejsu Plotter. Ciekawa sama w sobie, bo do
+ * działania używa prostszych `plotterów`, tak że jeżeli to możliwe deleguje do
+ * nich wywołania metody paint. Jest elementem realizacji wzorca Strategia GoF
+ * jako klasa konkretnej strategii.
+ */
 public class AdvancedPlotter implements Plotter {
 
-    LinePlotter simplePlotter = new LinePlotter();
-    PointPlotter dotPlotter = new PointPlotter();
+    final LinePlotter simplePlotter = new LinePlotter();
+    final PointPlotter dotPlotter = new PointPlotter();
 
+    /**
+     * Rysuje dane według wartości zapisanych w code jako linie ciągłe,
+     * przerywane, z punktami lub bez, w zadanym kolorze.
+     *
+     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param xAxis oś odciętych.
+     * @param yAxis oś rzędnych.
+     * @param data dane (ciąg punktów), jakie mają być wykreślone.
+     */
     @Override
     public void paint(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data) {
         String code = data.getCode();
@@ -44,6 +59,15 @@ public class AdvancedPlotter implements Plotter {
         }
     }
 
+    /**
+     * Metoda wywoływana przez metodę paint wtedy gdy nie da się delegować
+     * rysowania do metod klas PointPlotter lub LinePlotter.
+     *
+     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param xAxis oś odciętych.
+     * @param yAxis oś rzędnych.
+     * @param data dane (ciąg punktów), jakie mają być wykreślone.
+     */
     private void paint_dashed(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data) {
 
         final int n = data.getNumberOfDataPoints();

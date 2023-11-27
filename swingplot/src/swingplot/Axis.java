@@ -24,6 +24,7 @@
 package swingplot;
 
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * Axis jest ogólnie osią liczbową, bez określania jeszcze czy jest to oś
@@ -33,8 +34,8 @@ import java.awt.*;
  */
 public abstract class Axis {
 
-    final static int MAJOR_TICK_SIZE = 10; // długość kresek podziałki głównej
-    final static int MINOR_TICK_SIZE = 5;  // długość kresek podziałki drobnej
+    protected final static int MAJOR_TICK_SIZE = 10; // długość kresek podziałki głównej
+    protected final static int MINOR_TICK_SIZE = 5;  // długość kresek podziałki drobnej
 
     protected double min = 0.;  // minimalna wartość na osi
     protected double max = 10.; // maksymalna wartość na osi
@@ -47,9 +48,22 @@ public abstract class Axis {
     protected double offset; // w pikselach
     protected double length; // w pikselach
 
+    // Te pola są problematyczne bo z punktu widzenia czystości architektury,
+    // choć byłoby to wbrew zasadzie DRY, powinny być definiowane w subklasach
+    // klasy Axis, a nie w samej klasie Axis. Są one bowiem potrzebne wyłącznie
+    // dla konkretnych sposobów rysowania osi, czyli ogólnie są niepotrzebne
+    // w superklasie. Z drugiej strony przerzucenie ich do superklasy (podobnie
+    // jak pól offset i length) skraca i upraszcza kod klas XAxis i YAxis (choć
+    // dla jakiejś ZAxis czy HexAxis mogłyby być zbędne i niewystarczające).
+    //
+    // Ciekawe jest też wyjaśnienie po co nam np. pole ascent, skoro łatwo
+    // pozyskać odpowiednią wartość wywołując metrics.getAscent()? Wyjaśnienie
+    // jest trywialnie proste: chcemy w bardziej czytelny sposób zapisywać
+
     protected FontMetrics metrics;
     protected int fontHeight;
     protected int ascent;
+    protected int descent;
     protected int leading;
 
     /**
@@ -77,6 +91,7 @@ public abstract class Axis {
         metrics = graphics.getFontMetrics();
         fontHeight = metrics.getHeight();
         ascent = metrics.getAscent();
+        descent = metrics.getDescent();
         leading = metrics.getLeading();
     }
 

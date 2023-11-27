@@ -26,19 +26,29 @@ package swingplot;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * Klasa, będąca implementacją interfejsu Plotter, która dane rysuje jako ciągłą
+ * linię w określonym kolorze. Klasę tę rozumieć należy jako konkretną stategię
+ * z wzorca projektowego Strategia.
+ */
 public class LinePlotter implements Plotter {
+
+    /**
+     * Rysuje dane jako linie ciągłe o różnych kolorach.
+     *
+     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param xAxis    oś odciętych.
+     * @param yAxis    oś rzędnych.
+     * @param data     dane (ciąg punktów), jakie mają być wykreślone.
+     */
     @Override
     public void paint(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data) {
 
-        // Ten fragment można napisać rozmaicie, ale chcemy aby był możliwie
-        // jak najczytelniejszy. Dlatego nie użyliśmy metody drawPolygon(),
-        // ale po prostu łączymy kolejne punkty. Rozwiązanie to jest jednak
-        // wadliwe w tym sensie, że gdyby linia była linią przerywaną, to
-        // niegwarantowane byłoby prawidłowe utrzymanie długości przerw i/lub
-        // kresek w wierzchołkach.
-        //
         // Sprawdzamy, czy mamy dostateczną liczbę punktów. Powinien być
         // przynajmniej jeden, choć lepiej aby było ich więcej.
+        //
+        // Zauważmy, że aby ustalić kolor linii używamy metody z siostrzanej
+        // klasy PointPlotter.
         //
         final int n = data.getNumberOfDataPoints();
         if (n > 0) {

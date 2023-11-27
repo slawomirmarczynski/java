@@ -45,9 +45,9 @@ public class Plot extends JPanel {
 
     // Wykres zawiera dwie osie - jedną odciętych, drugą rzędnych.
     //
-    XAxis xAxis = new XAxis();
-    YAxis yAxis = new YAxis();
-    Plotter plotter = new AdvancedPlotter();
+    final XAxis xAxis = new XAxis();
+    final YAxis yAxis = new YAxis();
+    final Plotter plotter = new AdvancedPlotter();
 
     // Dane do wykreślania są gromadzone na liście.
     //
@@ -55,7 +55,7 @@ public class Plot extends JPanel {
     //        ale nie ma mechanizmów usuwania tych danych z listy. Oczywiście
     //        tę niedogodność można łatwo usunąć.
     //
-    List<DataSet> dataSets = new LinkedList<>();
+    final List<DataSet> dataSets = new LinkedList<>();
 
     // Nazwa całego wykresu jest tu. Nazwy osi są w obiektach xAxis i yAxis.
     // Lepiej dać pusty łańcuch znaków niż null, bo null wymagałby odrębnego
@@ -106,6 +106,10 @@ public class Plot extends JPanel {
         // i być może dałoby się to (przynajmniej częściowo) robić poza metodą
         // paintComponent. Ale wzrósłby wtedy poziom komplikacji programu,
         // musielibyśmy się też zastanawiać czy mamy aktualne dane.
+        //
+        // @todo: dla niewielkich rozmiarów okna możliwe jest aby client_width
+        //        i/lub client_height były ujemne, co doprowadzi do dziwacznych
+        //        rezultatów - należałoby temu przeciwdziałać.
         //
         final int client_width = getWidth() - leftMargin - rightMargin;
         final int client_height = getHeight() - topMargin - bottomMargin;

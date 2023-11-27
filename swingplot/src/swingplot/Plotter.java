@@ -27,7 +27,7 @@ import java.awt.*;
 
 /**
  * Plotter i jej implementacje są realizacją wzorca projektowego Strategia.
- *
+ * <p>
  * W klasie Plot rysowanie danych może być realizowany w rozmaicie, oczywiście
  * za każdym razem ma powstawać rysunek, ale sposób rysowania może być rozmaity.
  * Dlatego definiujemy abstrakcyjny interfejs Plotter (w Javie zamiast klas

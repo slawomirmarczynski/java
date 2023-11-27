@@ -50,7 +50,7 @@ public class DataSet {
      *
      * @param x    tablica liczb zmiennoprzecinkowych.
      * @param y    tablica liczb zmiennoprzecinkowych, tak samo duża jak x.
-     * @param code
+     * @param code łańcuch znaków z kodem określającym sposób rysowania.
      */
     public DataSet(double[] x, double[] y, String code) {
         this.numberOfDataPoints = Math.min(x.length, y.length);

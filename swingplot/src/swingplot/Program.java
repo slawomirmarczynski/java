@@ -87,6 +87,7 @@ public class Program {
             plot.setTitle("Wykres");
             plot.setXAxisLabel("oś odciętych");
             plot.setYAxisLabel("oś rzędnych");
+            //noinspection SuspiciousNameCombination
             plot.addDataSet(y, z, "go");  // green, circles, no line
             plot.addDataSet(x, y, "ro-"); // red, circles, solid line
             plot.addDataSet(x, z, "b--"); // blue, no circles, dashed line
