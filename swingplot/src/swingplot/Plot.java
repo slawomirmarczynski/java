@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Obiekty klasy Plot są po prostu wykresami XY.
  */
-class Plot extends JPanel {
+public class Plot extends JPanel {
 
     // Dlaczego to są finalne pola statyczne klasy, a nie zmienne lokalne metody
     // paintComponent? W przyszłości planujemy możliwość automatycznego
@@ -47,7 +47,7 @@ class Plot extends JPanel {
     //
     XAxis xAxis = new XAxis();
     YAxis yAxis = new YAxis();
-    Plotter plotter = new SimplePlotter();
+    Plotter plotter = new AdvancedPlotter();
 
     // Dane do wykreślania są gromadzone na liście.
     //
@@ -57,12 +57,15 @@ class Plot extends JPanel {
     //
     List<DataSet> dataSets = new LinkedList<>();
 
-    // Nazwa całeo wykresu jest tu. Nazwy osi są w obiektach xAxis i yAxis.
+    // Nazwa całego wykresu jest tu. Nazwy osi są w obiektach xAxis i yAxis.
+    // Lepiej dać pusty łańcuch znaków niż null, bo null wymagałby odrębnego
+    // sprawdzania, a pusty łańcuch znaków może (powinien) być bezpiecznie
+    // rysowany zawsze.
     //
     private String title = "";
 
     public Plot() {
-        super();
+        super();  // wywołanie konstruktora klasy bazowej
 
         // Moglibyśmy pozostawić "naturalny" kolor okna, ale biały lepiej
         // wygląda z wykresem. Przynajmniej takie jest moje subiektywne czucie.
@@ -73,12 +76,14 @@ class Plot extends JPanel {
     /**
      * Dodawanie do wykresu danych które mają być potem wykreślane.
      *
-     * @param x     tablica double[] zawierającą wartości odciętych.
-     * @param y     tablica double[] zawierającą wartości rzędnych.
-     * @param color kolor jakim ma być wykreślana inia.
+     * @param x    tablica double[] zawierającą wartości odciętych.
+     * @param y    tablica double[] zawierającą wartości rzędnych.
+     * @param code kod taki jak w Matlab, litera oznaczaja kolor, minusy
+     *             oznaczają linię ciągłą lub (gdy są dwa) przerywaną,
+     *             litera o oznacza wstawianie okręgów jako symboli punktów.
      */
-    void addDataSet(double[] x, double[] y, Color color) {
-        dataSets.add(new DataSet(x, y, color));
+    void addDataSet(double[] x, double[] y, String code) {
+        dataSets.add(new DataSet(x, y, code));
     }
 
     /**
@@ -88,7 +93,7 @@ class Plot extends JPanel {
      */
     @Override
     protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
+        super.paintComponent(graphics);  // rysowanie tła
         Graphics2D g2d = (Graphics2D) graphics;
 
         // Bez włączenia antyaliasingu obraz nie jest zbyt ładny, włączamy
@@ -96,25 +101,39 @@ class Plot extends JPanel {
         //
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        final int width = getWidth();
-        final int height = getHeight();
-        final int client_width = width - leftMargin - rightMargin;
-        final int client_height = height - topMargin - bottomMargin;
+        // Aby wszystko rozmieścić, potrzebujemy wiedzieć, ile mamy miejsca,
+        // gdzie je mamy i jakie są rozmiary czcionek. To dodatkowy narzut
+        // i być może dałoby się to (przynajmniej częściowo) robić poza metodą
+        // paintComponent. Ale wzrósłby wtedy poziom komplikacji programu,
+        // musielibyśmy się też zastanawiać czy mamy aktualne dane.
+        //
+        final int client_width = getWidth() - leftMargin - rightMargin;
+        final int client_height = getHeight() - topMargin - bottomMargin;
         final int xOffset = leftMargin;
         final int yOffset = topMargin + client_height;
-
         final FontMetrics metrics = graphics.getFontMetrics();
         final int fontHeight = metrics.getHeight();
         final int leading = metrics.getLeading();
-        final int titleWidth = metrics.stringWidth(title);
 
+        // Rysowanie osi. Ponieważ osie rysujemy na początku, to efektywnie
+        // będą one "na spodzie" wykresu. Czyli to co narysujemy później może
+        // zakryć osie i linie siatki.
+        //
         xAxis.paint(graphics, xOffset, yOffset, client_width, client_height);
         yAxis.paint(graphics, xOffset, yOffset, client_width, client_height);
 
-        graphics.drawString(title, xOffset + (client_width - titleWidth) / 2, yOffset - client_height - fontHeight - leading);
-        graphics.drawRect(leftMargin, topMargin, client_width, client_height);
+        // Rysowanie tytułu wykresu.
+        //
+        final int titleWidth = metrics.stringWidth(title);
+        final int centered = xOffset + (client_width - titleWidth) / 2;
+        final int above = yOffset - client_height - fontHeight - leading;
+        graphics.drawString(title, centered, above);
 
-        graphics.clipRect(xOffset, yOffset - client_height, client_width, client_height);
+        // Rysowanie danych poprzedzone zawężeniem obszaru przycinania tak,
+        // aby wypadał on wyłącznie wewnątrz osi współrzędnych.
+        //
+        graphics.drawRect(leftMargin, topMargin, client_width, client_height);
+        graphics.clipRect(leftMargin, topMargin, client_width, client_height);
         for (DataSet data : dataSets) {
             plotter.paint(graphics, xAxis, yAxis, data);
         }
@@ -127,13 +146,25 @@ class Plot extends JPanel {
      */
     public void setTitle(String title) {
         this.title = title;
+        invalidate();
     }
 
+    /**
+     * Po prostu nadanie nazwy dla osi x.
+     *
+     * @param string nazwa osi
+     */
     public void setXAxisLabel(String string) {
         xAxis.setLabel(string);
+        invalidate();
     }
 
+    /**
+     * Po prostu nadanie nazwy dla osi y.
+     * @param string nazwa osi
+     */
     public void setYAxisLabel(String string) {
         yAxis.setLabel(string);
+        invalidate();
     }
 }

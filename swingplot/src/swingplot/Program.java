@@ -32,7 +32,7 @@ import java.awt.*;
  * Klasa Program ma tylko jedną metodę. Zadaniem tej metody jest utworzyć
  * interfejs GUI Swing i w powstałym oknie graficznym osadzić obiekt klasy
  * Plot przekazując mu dane do wykreślenia.
- *
+ * <p>
  * Dla lepszego efektu warto uruchamiać z parametrem -Dsun.java2d.uiScale=2.0
  * maszyny wirtualnej. Spowoduje to przeskalowanie GUI korzystne dla dużego DPI.
  */
@@ -42,9 +42,27 @@ public class Program {
         // Dane do wykreślania są po prostu zwykłymi tablicami z liczbami
         // zmiennoprzecinkowymi. To bardzo proste rozwiązanie.
 
-        final double[] x = {1, 2, 3, 4, 5, 8, 9};
-        final double[] y = {2, 3, 3, 1, 5, 9, 5};
-        final double[] z = {1, 5, 2, 9, 2, 1, 100};
+        final int N = 100;
+        final double[] x = new double[N];
+        final double[] y = new double[N];
+        final double[] z = new double[N];
+        for (int i = 0; i < N; i++) {
+            double t = 5.0 * 2.0 * Math.PI * i / N;  // 5 razy od 0 do 2π
+            x[i] = t / 2;
+            y[i] = Math.exp(-0.15 * t) * Math.sin(t);
+            z[i] = Math.exp(-0.10 * t) * Math.cos(t);
+        }
+
+        // Przeskalowanie, tak aby dane były widoczne w zakresie od 0 do 10.
+        // Przyszłe wersje programu powinny same dobierać zakres osi, stosowna
+        // procedura jest niespecjalnie trudna, a wtedy przeliczenia w pętli
+        // for poniżej będą niepotrzebne.
+        //
+        for (int i = 0; i < N; i++) {
+            x[i] = x[i] / 2;
+            y[i] = y[i] * 10 + 5;
+            z[i] = z[i] * 10 + 5;
+        }
 
         // Jeżeli usuniemy EventQueue.invokeLater to istnieje ryzyko, że program
         // czasami będzie działać, a czasami nie. Wystąpią dziwne błędy trudne
@@ -52,10 +70,14 @@ public class Program {
         // program w domyślnym wątku, który nie jest wątkiem EDT, a na obiektach
         // Swing należy operować wyłącznie z wątku EDT.
         //
+        // Ciekawostka: AI generując programy w Javie nie obsługuje poprawnie
+        // EDT i wywołań invokeLater (ew. invokeAndWait), tylko tworzy kontrolki
+        // wprost w głównym wątku, co jest typowym błędem początkujących.
+        //
         EventQueue.invokeLater(() -> {
             JFrame frame = new JFrame("Program do rysowania wykresów");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(640, 480);
+            frame.setSize(640, 480);  // 640x480 to historyczna wartość dla PC
 
             // Tworzenie nowego wykresu jest tak proste jak to tylko możliwe.
             // Po prostu zamiast obiektu JButton czy JLabel tworzymy nowy obiekt
@@ -63,10 +85,11 @@ public class Program {
             //
             Plot plot = new Plot();
             plot.setTitle("Wykres");
-            plot.setXAxisLabel("odcięte");
-            plot.setYAxisLabel("rzędne");
-            plot.addDataSet(x, y, Color.RED);
-            plot.addDataSet(x, z, Color.BLUE);
+            plot.setXAxisLabel("oś odciętych");
+            plot.setYAxisLabel("oś rzędnych");
+            plot.addDataSet(y, z, "go");  // green, circles, no line
+            plot.addDataSet(x, y, "ro-"); // red, circles, solid line
+            plot.addDataSet(x, z, "b--"); // blue, no circles, dashed line
             frame.add(plot);
 
             frame.setVisible(true);

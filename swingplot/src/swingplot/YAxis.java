@@ -27,9 +27,6 @@ import java.awt.*;
 
 public class YAxis extends Axis {
 
-    double offset;
-    double length;
-
     public int valueToPixel(double value) {
         return (int) Math.round(-(value - min) / (max - min) * length + offset);
     }
@@ -37,26 +34,14 @@ public class YAxis extends Axis {
     @Override
     public void paint(Graphics graphics, int xOffset, int yOffset, int width, int height) {
 
+        super.paint(graphics, xOffset, yOffset, width, height);
+
         this.offset = yOffset;
         this.length = height;
 
-        final FontMetrics metrics = graphics.getFontMetrics();
-        final int fontHeight = metrics.getHeight();
-        final int ascent = metrics.getAscent();
-        final int leading = metrics.getLeading();
         final int labelWidth = metrics.stringWidth(label);
         final String formatString = "%." + decimalDigits + "f";
         double value;
-
-        graphics.drawLine(xOffset, yOffset, xOffset, yOffset - height);
-
-        final int xPivot = fontHeight + leading;
-        final int yPivot = yOffset - (height - labelWidth) / 2;
-        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
-        rotated_graphics.rotate(Math.toRadians(-90.0), xPivot, yPivot);
-        rotated_graphics.drawString(label,
-                xPivot,
-                yPivot);
 
         value = min + minorStep;
         graphics.setColor(Color.LIGHT_GRAY);
@@ -86,10 +71,19 @@ public class YAxis extends Axis {
             graphics.drawLine(xOffset, q, xOffset - MAJOR_TICK_SIZE, q);
             String tickLabel = String.format(formatString, value);
             int stringWidth = metrics.stringWidth(tickLabel);
-            graphics.drawString(tickLabel, xOffset - stringWidth - MAJOR_TICK_SIZE, q + ascent / 2);
+            int x = xOffset - stringWidth - MAJOR_TICK_SIZE - MINOR_TICK_SIZE;
+            int y = q + ascent / 2 - 1;
+            graphics.drawString(tickLabel, x, y);
             value += majorStep;
         }
 
-    }
+        graphics.drawLine(xOffset, yOffset, xOffset, yOffset - height);
 
+        final int xPivot = fontHeight + leading;
+        final int yPivot = yOffset - (height - labelWidth) / 2;
+        Graphics2D rotated_graphics = (Graphics2D) graphics.create();
+        rotated_graphics.rotate(Math.toRadians(-90.0), xPivot, yPivot);
+        rotated_graphics.drawString(label, xPivot, yPivot);
+        rotated_graphics.dispose();
+    }
 }

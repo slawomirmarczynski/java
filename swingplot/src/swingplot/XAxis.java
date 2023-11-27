@@ -27,9 +27,6 @@ import java.awt.*;
 
 public class XAxis extends Axis {
 
-    double offset;
-    double length;
-
     public int valueToPixel(double value) {
         return (int) Math.round((value - min) / (max - min) * length + offset);
     }
@@ -37,13 +34,11 @@ public class XAxis extends Axis {
     @Override
     public void paint(Graphics graphics, int xOffset, int yOffset, int width, int height) {
 
+        super.paint(graphics, xOffset, yOffset, width, height);
+
         this.offset = xOffset;
         this.length = width;
 
-        final FontMetrics metrics = graphics.getFontMetrics();
-        final int fontHeight = metrics.getHeight();
-        final int ascent = metrics.getAscent();
-        final int leading = metrics.getLeading();
         final int labelWidth = metrics.stringWidth(label);
         final String formatString = "%." + decimalDigits + "f";
         double value;
@@ -81,6 +76,7 @@ public class XAxis extends Axis {
         }
 
         graphics.drawLine(xOffset, yOffset, xOffset + width, yOffset);
+
         graphics.drawString(label,
                 xOffset + (width - labelWidth) / 2,
                 yOffset + fontHeight + ascent + leading + MAJOR_TICK_SIZE);

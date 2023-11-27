@@ -25,6 +25,29 @@ package swingplot;
 
 import java.awt.*;
 
+/**
+ * Plotter i jej implementacje są realizacją wzorca projektowego Strategia.
+ *
+ * W klasie Plot rysowanie danych może być realizowany w rozmaicie, oczywiście
+ * za każdym razem ma powstawać rysunek, ale sposób rysowania może być rozmaity.
+ * Dlatego definiujemy abstrakcyjny interfejs Plotter (w Javie zamiast klas
+ * abstrakcyjnych warto używać interfejsów jeżeli to możliwe), który określa
+ * abstrakcyjną strategię rysowania dostarczając funkcji paint. Konkretną
+ * strategię (czyli sposób) rysowania wybieramy poprzez wybór konkretnej
+ * implementacji abstrakcyjnej strategii. W ten sposób możemy łatwo rozszerzać
+ * możliwości tworząc nowe implementacje interfejsu Plotter i to bez potrzeby
+ * modyfikacji kodu starych implementacji tego interfejsu, przez co realizujemy
+ * zastadę OCP.
+ */
 public interface Plotter {
+
+    /**
+     * Rysuje dane używając danych osi współrzędnych.
+     *
+     * @param graphics obiekt Graphics jaki dostaje z nadrzędnego paintComponent.
+     * @param xAxis oś odciętych.
+     * @param yAxis oś rzędnych.
+     * @param data dane (ciąg punktów), jakie mają być wykreślone.
+     */
     void paint(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data);
 }

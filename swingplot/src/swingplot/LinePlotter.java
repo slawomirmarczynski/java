@@ -24,11 +24,12 @@
 package swingplot;
 
 import java.awt.*;
+import java.awt.geom.Path2D;
 
-public class SimplePlotter implements Plotter {
+public class LinePlotter implements Plotter {
     @Override
-    public void paint(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data)
-    {
+    public void paint(Graphics graphics, Axis xAxis, Axis yAxis, DataSet data) {
+
         // Ten fragment można napisać rozmaicie, ale chcemy aby był możliwie
         // jak najczytelniejszy. Dlatego nie użyliśmy metody drawPolygon(),
         // ale po prostu łączymy kolejne punkty. Rozwiązanie to jest jednak
@@ -39,23 +40,20 @@ public class SimplePlotter implements Plotter {
         // Sprawdzamy, czy mamy dostateczną liczbę punktów. Powinien być
         // przynajmniej jeden, choć lepiej aby było ich więcej.
         //
-        final int strokeWidth = 2;
-        graphics.setColor(data.getColor());
-        ((Graphics2D) graphics).setStroke(new BasicStroke(strokeWidth));
         final int n = data.getNumberOfDataPoints();
-        if (n > 2) {
-            for (int i = 2; i < n; i++) {
-                int x1 = xAxis.valueToPixel(data.getX(i - 1));
-                int y1 = yAxis.valueToPixel(data.getY(i - 1));
-                int x2 = xAxis.valueToPixel(data.getX(i));
-                int y2 = yAxis.valueToPixel(data.getY(i));
-                graphics.drawLine(x1, y1, x2, y2);
+        if (n > 0) {
+            Graphics2D g2d = (Graphics2D) graphics;
+            g2d.setColor(PointPlotter.getDatasetColor(data));
+            Path2D path = new Path2D.Float();
+            path.moveTo(data.getX(0), data.getY(0));
+            for (int i = 0; i < n; i++) {
+                int x = xAxis.valueToPixel(data.getX(i));
+                int y = yAxis.valueToPixel(data.getY(i));
+                path.lineTo(x, y);
             }
-        } else if (n == 1) {
-            int x1 = xAxis.valueToPixel(data.getX(0));
-            int y1 = yAxis.valueToPixel(data.getY(0));
-            graphics.drawLine(x1, y1, x1, y1);
+            final int strokeWidth = 2;
+            g2d.setStroke(new BasicStroke(strokeWidth));
+            g2d.draw(path);
         }
-
     }
 }

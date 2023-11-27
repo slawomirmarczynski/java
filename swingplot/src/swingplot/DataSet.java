@@ -22,58 +22,41 @@
  */
 package swingplot;
 
-import java.awt.Color;
-
 /**
  * Klasa reprezentująca zestaw danych, jakie mają być pokazywane na wykresie.
- *
+ * <p>
  * Każdy zestaw składa się z ciągu odciętych i ciągu rzędnych oraz określenia
  * koloru w jakim te dane mają być wykreślane. Oczywiście jest to tylko przykład
- * i dlatego brak w nim możliwości które mogłyby być konieczne np. dla osób
+ * i dlatego brak w nim możliwości, które mogłyby być konieczne np. dla osób
  * mających trudności z rozpoznawaniem kolorów.
  */
 public class DataSet {
 
     // Dlaczego private? Dlaczego nie final? Dlaczego nie static?
     //
-    // Private, bo nie chcemy aby możliwy był bezpośredni dostęp do tych danych.
-    // Nie-final, bo być może w przyszłości będziemy umożliwiali zmianę tych
-    // wartości. Dlaczego nie static? Bo chcemy móc wstawiać więcej niż jeden
-    // wykres.
+    // Private, bo nie chcemy umożliwiać bezpośredniego dostępu do tych danych.
+    // Nie-final, bo być może w przyszłości będziemy zmieniali te wartości.
+    // Dlaczego nie static? Bo chcemy móc wstawiać więcej niż jeden wykres.
     //
-    private int numberOfDataPoints;
-    private double[] x;
-    private double[] y;
-    private Color color;
+    private final int numberOfDataPoints;
+    private final double[] x;
+    private final double[] y;
+    private final String code;
 
     /**
      * Tworzy obiekt klasy DataSet na podstawie otrzymanych danych. Powstający
      * obiekt dostaje kopię danych, tak więc na zewnątrz nie wypływają na to
      * co będzie wykreślał program.
      *
-     * @param x tablica liczb zmiennoprzecinkowych.
-     * @param y tablica liczb zmiennoprzecinkowych, tak samo duża jak x.
-     * @param color kolor jakim ma być kreślona linia, np. COLOR.BLACK.
+     * @param x    tablica liczb zmiennoprzecinkowych.
+     * @param y    tablica liczb zmiennoprzecinkowych, tak samo duża jak x.
+     * @param code
      */
-    public DataSet(double[] x, double[] y, Color color) {
-
-        // Sprawdzamy czy wszystkie parametry są różne od null, jeżeli nie to
-        // zgłaszamy problemy wywołując wyjątek.
-        //
-        if (x == null || y == null || color == null) {
-            throw new NullPointerException();
-        }
-
-        // Sprawdzamy, czy długości tabel są jednakowe i większe od zera.
-        //
-        if (x.length == y.length && x.length > 0) {
-            this.numberOfDataPoints = x.length;
-            this.x = x.clone();
-            this.y = y.clone();
-            this.color = color;
-        } else {
-            throw new IllegalArgumentException();
-        }
+    public DataSet(double[] x, double[] y, String code) {
+        this.numberOfDataPoints = Math.min(x.length, y.length);
+        this.x = x.clone(); // tablice są mutable, klonowanie defensywne
+        this.y = y.clone(); // tablice są mutable, klonowanie defensywne
+        this.code = code; // łańcuchy znaków są immutable, klonowanie zbędne
     }
 
     /**
@@ -88,29 +71,32 @@ public class DataSet {
     /**
      * Zwraca wartość odciętej.
      *
-     * @param i numer wierzchołka łamanej, zaczynając od zera.
+     * @param index numer wierzchołka łamanej, zaczynając od zera.
      * @return wartość odciętej
      */
-    public double getX(int i) {
-        return x[i];
+    public double getX(int index) {
+        return x[index];
     }
 
     /**
      * Zwraca wartość rzędnej.
      *
-     * @param i numer wierzchołka łamanej, zaczynając od zera.
+     * @param index numer wierzchołka łamanej, zaczynając od zera.
      * @return wartość rzędnej.
      */
-    public double getY(int i) {
-        return y[i];
+    public double getY(int index) {
+        return y[index];
     }
 
     /**
-     * Zwraca wartość koloru, jakim powinna być rysowana łamana.
+     * Zwraca kod, zapisany w łańcuch znaków, określający w jaki sposób należy
+     * wykreślić linię.
      *
-     * @return kolor.
+     * @return kod, np. "r--o" oznacza czerwoną linię kreskowaną z zaznaczonymi
+     *         jako okręgi punktami; kod ten jest zbliżony do tego którego używa
+     *         się w programie Matlab i w bibliotece matplotlib w Pythonie.
      */
-    public Color getColor() {
-        return color;
+    public String getCode() {
+        return code;
     }
 }
