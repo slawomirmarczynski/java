@@ -210,9 +210,9 @@ public class Program implements Runnable {
         //
         try {
             for (String bestName : preferredNames) {
-                for (UIManager.LookAndFeelInfo avaliable : installed) {
-                    if (avaliable.getName().equals(bestName)) {
-                        UIManager.setLookAndFeel(avaliable.getClassName());
+                for (UIManager.LookAndFeelInfo available : installed) {
+                    if (available.getName().equals(bestName)) {
+                        UIManager.setLookAndFeel(available.getClassName());
                         return;
                     }
                 }
