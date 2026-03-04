@@ -72,7 +72,7 @@ class Expression {
     //
     private Expression(double a, String operand, double b) {
 
-        // Mamy póla (dostępnye wewnątrz klasy zmienne) i nazwy parametrów.
+        // Mamy pola (dostępne wewnątrz klasy zmienne) i nazwy parametrów.
         // Czy mogą one być jednakowe? Tak. Ale aby je rozróżnić trzeba dopisać
         // przed nazwami pól słowo this. W ten sposób instrukcją this.a = a;
         // zapisujemy w polu a wartość parametru a, przy tym nie potrzebujemy
@@ -167,3 +167,4 @@ class Expression {
         return result;
     }
 }
+
